@@ -8,9 +8,25 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  // var id = counter.getNextUniqueId();
+  // items[id] = text;
+  // callback(null, { id, text });
+  counter.getNextUniqueId((err, data) => {
+    if (err) {
+      console.log('Error creating file', err);
+    } else {
+      // let filePath = 'datastore/data';
+      let filePath = (`${exports.dataDir}/${data}.txt`);
+      console.log(filePath);
+      fs.writeFile(filePath, text, (err) => {
+        if (err) {
+          console.log('Error writing new file', err);
+        } else {
+          callback(null, { id: data, text: text });
+        }
+      });
+    }
+  });
 };
 
 exports.readAll = (callback) => {
@@ -52,7 +68,7 @@ exports.delete = (id, callback) => {
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
-exports.dataDir = path.join(__dirname, 'data');
+exports.dataDir = path.join(__dirname, 'data'); // gives us datastore/data
 
 exports.initialize = () => {
   if (!fs.existsSync(exports.dataDir)) {

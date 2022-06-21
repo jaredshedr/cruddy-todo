@@ -46,7 +46,7 @@ exports.getNextUniqueId = (callback) => {
       data++;
       writeCounter(data, (err, counterString) => {
         if (err) {
-          console.log('error writing file');
+          console.log('error writing counter');
         } else {
           callback(null, counterString);
         }
