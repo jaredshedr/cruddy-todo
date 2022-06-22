@@ -30,25 +30,69 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  // var data = _.map(items, (text, id) => {
-  //   return { id, text };
-  // });
-  // callback(null, data);
 
   let allFiles = [];
   let filePath = (`${exports.dataDir}`);
-  fs.readdir(filePath, (err, files) => {
-    if (err) {
-      console.log('Error reading files', err);
-    } else {
-      _.each(files, (file) => {
+  let fileNames = [];
+
+  fs.promises.readdir(filePath)
+    .then((files) => {
+      for (let file of files) {
         let name = file.slice(0, 5);
-        let temp = { id: name, text: name};
+        fileNames.push(name);
+        let temp = fs.promises.readFile(`${exports.dataDir}/${file}`, 'utf8');
         allFiles.push(temp);
-      });
-      callback(null, allFiles);
-    }
-  });
+      }
+      Promise.all(allFiles)
+        .then(todos => {
+          let newArray = [];
+          for (let i = 0; i < todos.length; i++) {
+            let temp = { id: fileNames[i], text: todo};
+            newArray.push(temp);
+          }
+          // console.log(todos);
+          callback(null, newArray);
+        })
+        .catch(err => {
+          console.log('err');
+        });
+    })
+    .catch( err => {
+      console.log('Error in read all', err);
+    });
+
+
+
+  // fs.readdir(filePath, (err, files) => {
+  //   if (err) {
+  //     console.log('Error reading files', err);
+  //   } else {
+  //     _.each(files, (file) => {
+  //       let name = file.slice(0, 5);
+  //       // read file
+  //       fs.promises.readFile(`${exports.dataDir}/${file}`, 'utf8')
+  //         .then((data) => {
+  //           let temp = { id: name, text: data};
+  //           allFiles.push(temp);
+  //         })
+  //         .catch((err) => {
+  //           console.log('err');
+  //         });
+
+        // , (err, fileData) => {
+        //   if (err) {
+        //     callback(new Error(`Cant read file ${name}`));
+        //   } else {
+        //     let temp = { id: name, text: fileData};
+        //     allFiles.push(temp);
+
+        //   }
+        // });
+  //     });
+
+  //     callback(null, allFiles);
+  //   }
+  // });
 };
 
 exports.readOne = (id, callback) => {
