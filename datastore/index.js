@@ -47,14 +47,13 @@ exports.readAll = (callback) => {
         .then(todos => {
           let newArray = [];
           for (let i = 0; i < todos.length; i++) {
-            let temp = { id: fileNames[i], text: todo};
+            let temp = { id: fileNames[i], text: todos[i]};
             newArray.push(temp);
           }
-          // console.log(todos);
           callback(null, newArray);
         })
         .catch(err => {
-          console.log('err');
+          console.log('err', err);
         });
     })
     .catch( err => {
